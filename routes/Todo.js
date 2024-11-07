@@ -8,6 +8,7 @@ router.get("/", (req, res) => {
 });
 
 router.get("/todos", todoController.getTodos);
+router.get("/todos/:id", todoController.getSingleTodo);
 router.post("/todos", todoController.createTodos);
 router.put("/todos/:id", todoController.updateTodos);
 router.delete("/todos/:id", todoController.deleteTodos);

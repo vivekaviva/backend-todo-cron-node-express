@@ -13,9 +13,18 @@ connectDatabase();
 dotenv.config();
 
 const server = http.createServer(app);
-const io = socketIO(server);
 
-app.use(cors({ origin: "http://localhost:18000" }));
+// Configure socket.io with CORS options
+const io = socketIO(server, {
+  cors: {
+    origin: "http://localhost:3000", // Your frontend URL
+    methods: ["GET", "POST"],
+    allowedHeaders: ["my-custom-header"],
+    credentials: true,
+  },
+});
+
+app.use(cors({ origin: "http://localhost:3000" }));
 app.use(express.json());
 app.use(compression());
 

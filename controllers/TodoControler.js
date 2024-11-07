@@ -6,16 +6,54 @@ const getTodos = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit;
+
   try {
-    const todos = await Todo.find().skip(skip).limit(limit);
+    // Fetch todos with pagination first
+    const todos = await Todo.find();
+    // const todos = await Todo.find().skip(skip).limit(limit);
 
-    const message = "Success! All Todo fetched";
-    // return res.json(todos);
+    // Log todos to check the status field
+    console.log(todos);
 
-    return common.sendResponse(todos, req, res, message);
+    // Separate pending and completed todos using proper case-insensitive filtering
+    const pendingTodos = todos.filter(
+      (todo) => (todo.status || "").toLowerCase() !== "completed"
+    );
+    const completedTodos = todos.filter(
+      (todo) => (todo.status || "").toLowerCase() === "completed"
+    );
+
+    // Log to check if the todos are being separated correctly
+    console.log("Pending Todos:", pendingTodos);
+    console.log("Completed Todos:", completedTodos);
+
+    // Prepare response with separated pending and completed todos
+    const response = {
+      message: "Success! Todos fetched",
+      pending: pendingTodos,
+      completed: completedTodos,
+    };
+
+    return common.sendResponse(response, req, res);
   } catch (err) {
-    console.error(err);
+    console.error("Error fetching TODOs:", err);
     res.status(500).send("Failed to fetch TODOs");
+  }
+};
+
+const getSingleTodo = async (req, res) => {
+  try {
+    const todo = await Todo.findById(req.params.id);
+
+    if (!todo) {
+      return res.status(404).json({ message: "Todo not found" });
+    }
+
+    const message = "Success! Todo fetched";
+    return common.sendResponse(todo, req, res, message);
+  } catch (err) {
+    console.error("Error fetching TODO:", err);
+    res.status(500).json({ error: "Failed to fetch TODO" });
   }
 };
 const createTodos = async (req, res) => {
@@ -66,4 +104,10 @@ const deleteTodos = async (req, res) => {
   }
 };
 
-module.exports = { getTodos, createTodos, updateTodos, deleteTodos };
+module.exports = {
+  getTodos,
+  createTodos,
+  updateTodos,
+  deleteTodos,
+  getSingleTodo,
+};
