@@ -24,7 +24,7 @@ const io = socketIO(server, {
   },
 });
 
-app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors({ origin: "http://localhost:18000" }));
 app.use(express.json());
 app.use(compression());
 
@@ -56,4 +56,4 @@ server.listen(PORT, () => {
   console.log(`Server listening on Port ${PORT}`);
 });
 
-module.exports = server; // Export only the server, not io
+module.exports = server;
