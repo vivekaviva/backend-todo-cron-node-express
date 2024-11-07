@@ -85,7 +85,9 @@ const updateTodos = async (req, res) => {
     });
     const io = req.app.get("io");
     io.emit("todoUpdated", todo); // Notify clients of the update
-    res.json(todo);
+    // res.json(todo);
+    const message = "Success! Todo updated";
+    return common.sendResponse(todo, req, res, message);
   } catch (error) {
     console.error("Error creating TODO:", error);
     res.status(500).json({ error: "Failed to update TODO" });
@@ -94,10 +96,12 @@ const updateTodos = async (req, res) => {
 
 const deleteTodos = async (req, res) => {
   try {
-    await Todo.findByIdAndDelete(req.params.id);
+    const todo = await Todo.findByIdAndDelete(req.params.id);
     const io = req.app.get("io");
     io.emit("todoDeleted", req.params.id); // Notify clients of the deletion
-    res.json({ message: "TODO deleted" });
+    // res.json({ message: "TODO deleted" });
+    const message = "Success! Todo deleted";
+    return common.sendResponse(todo, req, res, message);
   } catch (error) {
     console.error("Error creating TODO:", error);
     res.status(500).json({ error: "Failed to delete TODO" });
